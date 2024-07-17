@@ -272,7 +272,7 @@ module Docker::Compose
       end
 
       @shell.chdir = dir
-      @last_command = @shell.run('docker-compose', *project_name_args, *file_args, *args).join
+      @last_command = @shell.run('docker', 'compose', *project_name_args, *file_args, *args).join
       status = @last_command.status
       out = @last_command.captured_output
       err = @last_command.captured_error

@@ -49,7 +49,7 @@ module Docker::Compose
       docker_host = ENV['DOCKER_HOST']
       if docker_host.nil? || docker_host =~ /^(\/|unix|file)/
         # If DOCKER_HOST is blank, or pointing to a local socket, then we
-        # can trust the address information returned by `docker-compose port`.
+        # can trust the address information returned by `docker compose port`.
         override_host = nil
       else
         # If DOCKER_HOST is present, assume that containers have bound to

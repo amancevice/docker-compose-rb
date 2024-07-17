@@ -23,22 +23,22 @@ describe Docker::Compose::Session do
   describe '.new' do
     it 'allows project_name override' do
       s1 = described_class.new(shell, project_name: 'test_name')
-      expect(shell).to receive(:run).with('docker-compose', { project_name: 'test_name' }, anything, anything, anything)
+      expect(shell).to receive(:run).with('docker', 'compose', { project_name: 'test_name' }, anything, anything, anything)
       s1.up
     end
 
     it 'allows file override' do
       s1 = described_class.new(shell, file: 'foo.yml')
-      expect(shell).to receive(:run).with('docker-compose', { file: 'foo.yml' }, anything, anything, anything)
+      expect(shell).to receive(:run).with('docker', 'compose', { file: 'foo.yml' }, anything, anything, anything)
       s1.up
     end
   end
 
   describe '#build' do
     it 'creates images' do
-      expect(shell).to receive(:run).with('docker-compose', 'build', {}, %w[alice bob]).once
+      expect(shell).to receive(:run).with('docker', 'compose', 'build', {}, %w[alice bob]).once
       session.build('alice', 'bob')
-      expect(shell).to receive(:run).with('docker-compose', 'build', { force_rm: true, no_cache: true, pull: true }, []).once
+      expect(shell).to receive(:run).with('docker', 'compose', 'build', { force_rm: true, no_cache: true, pull: true }, []).once
       session.build(force_rm: true, no_cache: true, pull: true)
     end
   end
@@ -82,7 +82,7 @@ describe Docker::Compose::Session do
       let(:hashes) { %w[sweet_potato afghan_black] }
 
       it 'lists containers' do
-        expect(shell).to receive(:run).with('docker-compose', 'ps', hash_including, %w[service1 service2])
+        expect(shell).to receive(:run).with('docker', 'compose', 'ps', hash_including, %w[service1 service2])
         expect(shell).not_to receive(:run).with('docker', 'ps', hash_including(f: 'id=corned_beef'))
         cont = session.ps('service1', 'service2')
         expect(cont.size).to eq(2)
@@ -92,11 +92,11 @@ describe Docker::Compose::Session do
 
   describe '#up' do
     it 'runs containers' do
-      expect(shell).to receive(:run).with('docker-compose', 'up', {}, [])
-      expect(shell).to receive(:run).with('docker-compose', 'up', hash_including(d: true, timeout: 3), [])
-      expect(shell).to receive(:run).with('docker-compose', 'up', hash_including(no_start: true), [])
-      expect(shell).to receive(:run).with('docker-compose', 'up', hash_including(exit_code_from: 'foo'), [])
-      expect(shell).to receive(:run).with('docker-compose', 'up', hash_including(abort_on_container_exit: true), [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'up', {}, [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'up', hash_including(d: true, timeout: 3), [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'up', hash_including(no_start: true), [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'up', hash_including(exit_code_from: 'foo'), [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'up', hash_including(abort_on_container_exit: true), [])
       session.up
       session.up detached: true, timeout: 3
       session.up no_start: true
@@ -107,8 +107,8 @@ describe Docker::Compose::Session do
 
   describe '#down' do
     it 'brings down containers' do
-      expect(shell).to receive(:run).with('docker-compose', 'down', {})
-      expect(shell).to receive(:run).with('docker-compose', 'down', hash_including(v: true))
+      expect(shell).to receive(:run).with('docker', 'compose', 'down', {})
+      expect(shell).to receive(:run).with('docker', 'compose', 'down', hash_including(v: true))
       session.down
       session.down remove_volumes: true
     end
@@ -116,39 +116,39 @@ describe Docker::Compose::Session do
 
   describe '#run' do
     it 'runs containers' do
-      expect(shell).to receive(:run).with('docker-compose', 'run', {}, 'service1', [])
-      expect(shell).to receive(:run).with('docker-compose', 'run', hash_including(d: true, T: true), 'service1', %w[command command_args])
-      expect(shell).to receive(:run).with('docker-compose', 'run', hash_including(u: 'user_id:group_id'), 'service1', [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'run', {}, 'service1', [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'run', hash_including(d: true, T: true), 'service1', %w[command command_args])
+      expect(shell).to receive(:run).with('docker', 'compose', 'run', hash_including(u: 'user_id:group_id'), 'service1', [])
       session.run('service1')
       session.run('service1', 'command', 'command_args', no_tty: true, detached: true)
       session.run('service1', user: 'user_id:group_id')
     end
 
     it 'runs containers with env vars' do
-      expect(shell).to receive(:run).with('docker-compose', 'run', {}, { e: 'VAR1=val1' }, 'service1', [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'run', {}, { e: 'VAR1=val1' }, 'service1', [])
       session.run('service1', env: ['VAR1=val1'])
-      expect(shell).to receive(:run).with('docker-compose', 'run', {}, { e: 'VAR1=val1' }, { e: 'VAR2=val2' }, 'service1', [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'run', {}, { e: 'VAR1=val1' }, { e: 'VAR2=val2' }, 'service1', [])
       session.run('service1', env: ['VAR1=val1', 'VAR2=val2'])
     end
 
     it 'runs containers with mounted volumes' do
-      expect(shell).to receive(:run).with('docker-compose', 'run', {}, { v: '/host1:/container1' }, 'service1', [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'run', {}, { v: '/host1:/container1' }, 'service1', [])
       session.run('service1', volumes: ['/host1:/container1'])
-      expect(shell).to receive(:run).with('docker-compose', 'run', {}, { v: '/host1:/container1' }, { v: '/host2:/container2' }, 'service1', [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'run', {}, { v: '/host1:/container1' }, { v: '/host2:/container2' }, 'service1', [])
       session.run('service1', volumes: ['/host1:/container1', '/host2:/container2'])
     end
 
     it 'runs containers with service ports' do
-      expect(shell).to receive(:run).with('docker-compose', 'run', { service_ports: true }, 'service1', %w[command command_args])
+      expect(shell).to receive(:run).with('docker', 'compose', 'run', { service_ports: true }, 'service1', %w[command command_args])
       session.run('service1', 'command', 'command_args', service_ports: true)
     end
   end
 
   describe '#scale' do
     it 'scales containers' do
-      expect(shell).to receive(:run).with('docker-compose', 'scale', {}, 'service1=2')
-      expect(shell).to receive(:run).with('docker-compose', 'scale', {}, 'service1=3', 'service2=4')
-      expect(shell).to receive(:run).with('docker-compose', 'scale', { timeout: 3 }, 'service1=1')
+      expect(shell).to receive(:run).with('docker', 'compose', 'scale', {}, 'service1=2')
+      expect(shell).to receive(:run).with('docker', 'compose', 'scale', {}, 'service1=3', 'service2=4')
+      expect(shell).to receive(:run).with('docker', 'compose', 'scale', { timeout: 3 }, 'service1=1')
       session.scale({ service1: 2 })
       session.scale({ service1: 3, service2: 4 })
       session.scale({ service1: 1 }, timeout: 3)
@@ -157,9 +157,9 @@ describe Docker::Compose::Session do
 
   describe '#rm' do
     it 'removes containers' do
-      expect(shell).to receive(:run).with('docker-compose', 'rm', {}, [])
-      expect(shell).to receive(:run).with('docker-compose', 'rm', {}, ['joebob'])
-      expect(shell).to receive(:run).with('docker-compose', 'rm', hash_including(f: true, v: true), [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'rm', {}, [])
+      expect(shell).to receive(:run).with('docker', 'compose', 'rm', {}, ['joebob'])
+      expect(shell).to receive(:run).with('docker', 'compose', 'rm', hash_including(f: true, v: true), [])
       session.rm
       session.rm 'joebob'
       session.rm force: true, volumes: true
@@ -192,35 +192,35 @@ describe Docker::Compose::Session do
   describe '#run!' do
     it 'omits "--file" when possible' do
       fancypants = described_class.new(shell, file: 'docker-compose.yml')
-      expect(shell).to receive(:run).with('docker-compose', 'foo')
+      expect(shell).to receive(:run).with('docker', 'compose', 'foo')
       fancypants.instance_eval { run!('foo') }
     end
 
     it 'handles project_name overrides' do
       fancypants = described_class.new(shell, project_name: 'test_name')
-      expect(shell).to receive(:run).with('docker-compose', { project_name: 'test_name' }, 'foo')
+      expect(shell).to receive(:run).with('docker', 'compose', { project_name: 'test_name' }, 'foo')
       fancypants.instance_eval { run!('foo') }
     end
 
     it 'handles file overrides' do
       fancypants = described_class.new(shell, file: 'docker-decompose.yml')
-      expect(shell).to receive(:run).with('docker-compose', { file: 'docker-decompose.yml' }, 'foo')
+      expect(shell).to receive(:run).with('docker', 'compose', { file: 'docker-decompose.yml' }, 'foo')
       fancypants.instance_eval { run!('foo') }
     end
 
     it 'handles multiple files' do
       fancypants = described_class.new(shell, file: ['orange.yml', 'apple.yml'])
-      expect(shell).to receive(:run).with('docker-compose', { file: 'orange.yml' }, { file: 'apple.yml' }, 'foo')
+      expect(shell).to receive(:run).with('docker', 'compose', { file: 'orange.yml' }, { file: 'apple.yml' }, 'foo')
       fancypants.instance_eval { run!('foo') }
     end
 
     it 'handles weird input' do
       fancypants = described_class.new(shell, file: 42)
-      expect(shell).to receive(:run).with('docker-compose', { file: '42' }, 'foo')
+      expect(shell).to receive(:run).with('docker', 'compose', { file: '42' }, 'foo')
       fancypants.instance_eval { run!('foo') }
 
       fancypants = described_class.new(shell, file: Pathname.new('/tmp/moo.yml'))
-      expect(shell).to receive(:run).with('docker-compose', { file: '/tmp/moo.yml' }, 'foo')
+      expect(shell).to receive(:run).with('docker', 'compose', { file: '/tmp/moo.yml' }, 'foo')
       fancypants.instance_eval { run!('foo') }
     end
 

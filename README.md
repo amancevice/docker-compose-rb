@@ -2,7 +2,7 @@
 
 # Docker::Compose
 
-This is a Ruby OOP wrapper for the [docker-compose](https://github.com/docker/compose)
+This is a Ruby OOP wrapper for the [docker compose](https://github.com/docker/compose)
 container orchestration tool from Docker Inc.
 
 In addition to wrapping the CLI, this gem provides an environment-variable mapping
@@ -14,7 +14,7 @@ on another machine, e.g. a cloud instance or a container cluster, provided your
 development machine has TCP connectivity to every port exposed by a container.
 
 Throughout this documentation we will refer to this gem as `Docker::Compose`
-as opposed to the `docker-compose` tool that this gem wraps.
+as opposed to the `docker compose` tool that this gem wraps.
 
 ## Installation
 
@@ -120,7 +120,7 @@ to the actual IP and port that `db` has been published to, and run my app:
 
 ```bash
 # First, bring up the containers we will be interested in
-user@machine$ docker-compose up -d
+user@machine$ docker compose up -d
 
 # The rake task prints bash code resembling the following:
 #   export DATABASE_HOST='127.0.0.1'

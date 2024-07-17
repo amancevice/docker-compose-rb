@@ -11,7 +11,7 @@ require 'docker/compose/shell_printer'
 
 module Docker::Compose
   class RakeTasks < Rake::TaskLib
-    # Set the directory in which docker-compose commands will be run. Default
+    # Set the directory in which docker compose commands will be run. Default
     # is the directory in which Rakefile is located.
     #
     # @return [String]
@@ -46,7 +46,7 @@ module Docker::Compose
     # between the two, then extra_host_env will "win."
     attr_accessor :extra_host_env
 
-    # Services to bring up with `docker-compose up` before running any hosted
+    # Services to bring up with `docker compose up` before running any hosted
     # command. This is useful if your `docker-compose.yml` contains a service
     # definition for the app you will be hosting; if you host the app, you
     # want to specify all of the _other_ services, but not the app itself, since
@@ -56,7 +56,7 @@ module Docker::Compose
     # Namespace to define the rake tasks under. Defaults to "docker:compose'.
     attr_accessor :rake_namespace
 
-    # Construct Rake wrapper tasks for docker-compose. If a block is given,
+    # Construct Rake wrapper tasks for docker compose. If a block is given,
     # yield self to the block before defining any tasks so their behavior
     # can be configured by calling #server_env=, #file= and so forth.
     def initialize

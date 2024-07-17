@@ -9,8 +9,8 @@ Gem::Specification.new do |spec|
   spec.authors       = ['Tony Spataro']
   spec.email         = ['xeger@xeger.net']
 
-  spec.summary       = 'Wrapper docker-compose with added Rake smarts.'
-  spec.description   = 'Provides an OOP interface to docker-compose and facilitates container-to-host and host-to-container networking.'
+  spec.summary       = 'Wrapper for docker compose with added Rake smarts.'
+  spec.description   = 'Provides an OOP interface to docker compose and facilitates container-to-host and host-to-container networking.'
   spec.homepage      = 'https://github.com/xeger/docker-compose'
   spec.license       = 'MIT'
 
